@@ -1,6 +1,6 @@
 1.launch two ec2 machines for fronted reactjs and for backend python flask
 
-2.setup the reactjs application and access the page for the confirmation
+2.setup the reactjs application https://github.com/kalpanaIronbanda/ReactJs-on-ec2.git and access the page for the confirmation
 
 3.setup the flask application with rds and access from browser 
 you can refer https://github.com/kalpanaIronbanda/flask-with-rds.git
