@@ -4,7 +4,7 @@ function App() {
   const [studentTable, setStudentTable] = useState('');
 
   const handleClick = async () => {
-    const response = await fetch('http://ip-of-ur-backend-ec2/');
+    const response = await fetch('URL_OF_YOUR_BACKEND_API');
     const result = await response.text();
     setStudentTable(result);
   };
