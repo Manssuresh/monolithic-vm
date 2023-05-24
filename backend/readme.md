@@ -11,16 +11,13 @@ Services Involved:
 cloud : AWS
 services:
 1.EC2
-2.IAM
+2.IAM-----role with rds full access permission and attach to instance
 3.RDS
-4.Secret manager
-
 
 Prerequisites
 ---------------
 We are running this application on top of VM. So we need to launch an instance.
 Create a mysql database in rds
-create a secret in secret manager
 Install all the dependencies which are mentioned in dependencies.sh file in this repo
 
 Procedure
@@ -30,48 +27,39 @@ Procedure
 2. In RDS, create mysql database
 Get the secrets like host,user,password
     allow 3306 from the instance sg
-
-3. In secret manager create a secret to store your rds creds
-
-4. In IAM, 
-    a.create a policy with following json;
-
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "AllowMyAppAccessToSecret",
-                "Effect": "Allow",
-                "Action": [
-                    "secretsmanager:GetSecretValue"
-                ],
-                "Resource": [
-                    "<give the arn of secret manager>"
-                ]
-            }
-        ]
-    }
-    b. create a role and attach the above policy
-5. attach the created role to an instance to get the permission to access secrets from secret manager
+connect:
+--------
 
 
-6. connect to the instance 
+
+
+1. connect to the instance 
    ssh command
-7. Clone this repository to your local machine:
-git clone https://github.com/kalpanaIronbanda/monolithic-application-2.git
 
-Navigate to the project directory:
-cd backend
+mysql -h <rds endpoint> -u <username> -p 
+this command will prompt you to enter the password
 
-8. install the dependencies
+after connecting to the db run the following quesries to create tables and insert values in it
+
+a. use <db name>;
+b. CREATE TABLE <tableName>  (name VARCHAR(50) NOT NULL,roll INT NOT NULL, grade CHAR(1) 
+NOT NULL );
+c.show tables;
+d.INSERT INTO <tableName> (name, roll, grade) VALUES ('leo hank', 103, 'A');
+you can insert multiple values
+e. select * from <tablename>;
+    it will show the table with the values which you inserted
+
+
+1. install the dependencies
    sh dependencies.sh
 
-9. cofiguration:
+2. cofiguration:
    --------------
-   open app.py and replace the secretname and region
+   open app.py and give the rds creds i.e. host,username,password,db name
 
 
-10. Run the application
+3.  Run the application
     a.foreground------
     # python3 app.py
     b.background------
