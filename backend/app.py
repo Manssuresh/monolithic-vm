@@ -5,6 +5,7 @@ from flask import Flask, jsonify
 import json
 import mysql.connector
 import configparser
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
