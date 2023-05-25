@@ -115,6 +115,7 @@
                 script{
                     sh '''
                     echo "installing......"
+                    ssh root@${frontendhost} "rm -rf node_modules"
                     ssh root@${frontendhost} "yum install nodejs -y && npm install"
                     echo "installed successfully"
                     '''
@@ -126,6 +127,7 @@
                 script{
                 sh ''' 
                 echo "running the reactjs application"
+
                 ssh root@${frontendhost} "npm start"
                 echo "completed successfully"                
                 '''
