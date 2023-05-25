@@ -17,33 +17,33 @@ Procedure:
 
 Go through with the following commands :
 
-1) yum install git -y 
+1)  yum install git -y 
 
-2) git clone <git url link>
+2)  git clone <'git url link'>
 
-3) cd <foldername>
+3)  cd <'foldername'>
 
-4) cd <forntend floder name>
+4)  cd <'forntend floder name'>
 
-5)yum install nodejs -y
+5)  yum install nodejs -y
    
-6)npm install
+6)  npm install
 
-7)npm install -g npm@9.6.7
+7)  npm install -g npm@9.6.7
 
-8) cd /src
+8)  cd /src
 
 Configuration:
 ----------------
 
 update the backend url in the App.js file to fetch the data from backend aplication
 
-1) vi app.js 
+1)  vi app.js 
 
 Run the application:
 ------------------
 
-2) npm start 
+2)  npm start 
 
 
 

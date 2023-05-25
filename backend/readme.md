@@ -30,49 +30,50 @@ Go through with the commands :
 
 ---->Connect to the instance
 
-1) yum install git -y 
-
-2) git clone <git url link>
-
-3) cd <foldername>
-
-4) cd <backend flodername>
-
-5) sh dependencies.sh  
-
----->After installing all the dependencies, connect with rds and create a table and then insert some values as your requirement,--for that follow the below commands
-
-6) mysql -h <rds endpoint> -u <username> -p <password>
-
-7) CREATE TABLE <tablename>( name VARCHAR(50) NOT NULL, roll INT NOT NULL, grade CHAR(1) NOT NULL );
-
-8) INSERT INTO <tablename>(name, roll, grade) VALUES ('leo hank', 103, 'A');
-
-  INSERT INTO <tablename>(name, roll, grade) VALUES ('ram', 104, 'B');
-
-  INSERT INTO <tablename>(name, roll, grade) VALUES ('devops', 105, 'B');
-
-9) \q ----to exit from the rds
-
-
- cofiguration:
---------------
-
-   cofigure the application and give the rds creds i.e. host,username,password,db name
-
-1) vi properties.db-----
-   update the dbname,host,username,password
-
-2) esc+:wq!-----command to save the file
-   
-Run the application:
-----------------------
-    a.foreground------
-
-    1) python3 app.py
-
-    b.background------
-
-    2) nohup python3 app.py &
-
-
+1)  yum install git -y 
+ 
+2)  git clone <'git url link'>
+ 
+3)  cd <'foldername'>
+ 
+4)  cd <'backend flodername'>
+ 
+5)  sh dependencies.sh  
+ 
+--- ->After installing all the dependencies, connect with rds and create a table and then insert some values as your requirement,--for that follow the below commands
+ 
+6)  mysql -h <'rds endpoint'> -u <'username'> -p <'password'>
+ 
+7)  CREATE TABLE <'tablename'>( name VARCHAR(50) NOT NULL, roll INT NOT NULL, grade CHAR(1) NOT NULL );
+ 
+8)  INSERT INTO <'tablename'>(name, roll, grade) VALUES ('leo hank', 103, 'A');
+ 
+    INSERT INTO <'tablename'>(name, roll, grade) VALUES ('ram', 104, 'B');
+ 
+    INSERT INTO <'tablename'>(name, roll, grade) VALUES ('devops', 105, 'B');
+ 
+9)  \q ----to exit from the rds
+ 
+ 
+ co figuration:
+--- -----------
+ 
+    cofigure the application and give the rds creds i.e. host,username,password,db name
+ 
+1)  vi properties.db-----
+    update the dbname,host,username,password
+ 
+2)  esc+:wq!-----command to save the file
+    
+Run  the application:
+--- -------------------
+     a. foreground------
+ 
+     1)  python3 app.py
+  
+     b. background------
+  
+     2)  nohup python3 app.py &
+  
+  
+  
