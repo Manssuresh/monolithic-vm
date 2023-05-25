@@ -1,72 +1,72 @@
-pipeline {
+ pipeline{
     agent any
-    
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'feature', url: 'https://github.com/kalpanaIronbanda/monolithic-vm.git'
-            }
-        }
-        
-
-        
-        stage('Build backend') {
+    parameters{
+        string(name: 'flaskbucketname', defaultValue: 'flaskbucketname', description: 'bucket name')
+        string(name: 'backendhost', defaultValue: 'backendhost', description: 'host name')
+    }
+    stages{
+        stage('Build') {
             steps {
                 script{
-                sh """
+                sh '''
                 cd backend
                 echo 'Building Flask application...'
                 rm -fr *.zip
-                zip -r college-$BUILD_NUMBER.zip *
-                aws s3 cp college-$BUILD_NUMBER.zip s3://flask-package-bucket/
-                scp dependencies.sh root@10.1.3.53:/root/
+                zip -r flask-$BUILD_NUMBER.zip *
+                aws s3 cp flask-$BUILD_NUMBER.zip s3://${flaskbucketname}/
+                scp dependencies.sh root@${backendhost}:/root/
                 rm -fr *
                 echo 'Flask application built successfully!'
-                ssh root@10.1.3.53 'sh dependencies.sh'
-                """
+                '''
                 }
             }
         }
-        stage('deploy backend'){
-            steps{
+        stage('Deploy') {
+            steps {
                 script{
-                sh """
+                sh '''
                 echo 'Deploying Flask application...'
-                ssh root@10.1.3.53 'rm -rf *'
-                aws s3 cp s3://flask-package-bucket/college-$BUILD_NUMBER.zip .
-                scp college-$BUILD_NUMBER.zip root@10.1.3.53:/root/
-                ssh root@10.1.3.53 'unzip college-$BUILD_NUMBER.zip'
-                ssh root@10.1.3.53 'rm -rf *.zip'
+                ssh root@${backendhost} "rm -rf *"
+                aws s3 cp s3://${flaskbucketname}/flask-$BUILD_NUMBER.zip .
+                scp flask-$BUILD_NUMBER.zip root@${backendhost}:/root/
+                ssh root@${backendhost} "unzip flask-$BUILD_NUMBER.zip"
+                ssh root@${backendhost} "sudo rm -rf *.zip"
                 rm -fr *.zip
                 echo 'Flask application deployed successfully!'
-                """
+                '''
                 }
             }
         }
-        stage('Run the Backend app'){
+        stage('Installation'){
             steps{
                 script{
-                    sh """
-                    echo 'running the app....'
-                    ssh root@10.1.3.53 'nohup python3 app.py &'
-                    echo 'running succcessfully'
-                    ssh root@10.1.3.53 'netstat -anlp | grep 80 -w'
-                    """
+                sh '''
+                echo 'installing the dependencies...'
+                ssh root@${backendhost} "sh dependencies.sh"
+                echo 'installed successfully'
+                '''
                 }
             }
         }
-        // stage('Build and Deploy Frontend') {
-        //     steps {
-        //         script{
-        //         sh """
-        //         cd frontend // Or any other build commands for your frontend
-                
-        //         // Deploy frontend to the frontend EC2 instance
-        //         scp -r frontend/ root@10.1.3.5:/root/
-
-        //         """
-        //         }
-        //     }
-        // }
+        stage('Run'){
+            steps{
+                script{
+                sh '''
+                echo 'running the flask application'
+                ssh root@${backendhost} "nohup python3 app.py &"
+                echo 'completed successfully'
+                '''
+                }
+            }
+        }
+        stage('confirmation'){
+            steps{
+                script{
+                    sh '''
+                    ssh root@${backendhost} "sudo netstat -anlp | grep '80'"
+                    '''
+                }
+            }
+        }
     }
 }
