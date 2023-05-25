@@ -15,11 +15,23 @@ pipeline {
                 script{
                 sh """
                 cd backend
-                #Or any other build commands for your backend
-                
-                #Deploy backend to the backend EC2 instance
-                scp -r * root@10.1.3.53:/root/
+                echo 'Building Flask application...'
+                rm -fr *.zip
+                zip -r college-$BUILD_NUMBER.zip *
+                aws s3 cp college-$BUILD_NUMBER.zip s3://flask-package-bucket/
+                scp dependencies.sh root@10.1.3.53:/root/
+                rm -fr *
+                echo 'Flask application built successfully!'
                 ssh root@10.1.3.53 'sh dependencies.sh'
+
+                echo 'Deploying Flask application...'
+                ssh root@10.1.3.53 "rm -rf *"
+                aws s3 cp s3://flask-package-bucket/college-$BUILD_NUMBER.zip .
+                scp college-$BUILD_NUMBER.zip root@10.1.3.53:/root/
+                ssh root@10.1.3.53 "unzip college-$BUILD_NUMBER.zip"
+                ssh root@10.1.3.53 "rm -rf *.zip"
+                rm -fr *.zip
+                echo 'Flask application deployed successfully!
                 """
                 }
             }
@@ -44,6 +56,7 @@ pipeline {
                 
         //         // Deploy frontend to the frontend EC2 instance
         //         scp -r frontend/ root@10.1.3.5:/root/
+
         //         """
         //         }
         //     }
