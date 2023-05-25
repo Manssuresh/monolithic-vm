@@ -4,7 +4,7 @@ function App() {
   const [studentTable, setStudentTable] = useState('');
 
   const handleClick = async () => {
-    const response = await fetch('URL_OF_YOUR_BACKEND_API');
+    const response = await fetch(process.env.REACT_APP_BACKEND_URL);
     const result = await response.text();
     setStudentTable(result);
   };
