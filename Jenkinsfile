@@ -21,48 +21,44 @@ pipeline {
         }
 
         stage('Build and Deploy Backend') {
-            // agent {
-            //     label 'backend'
-            // }
             steps {
-                sh 'cd backend'
+                dir('backend') {
+                    // Update backend configuration file with RDS credentials and table name
+                    sh "sed -i 's|DB_HOST = .*|DB_HOST = \"${env.DB_HOST}\"|' app.py"
+                    sh "sed -i 's|DB_USER = .*|DB_USER = \"${env.DB_USER}\"|' app.py"
+                    sh "sed -i 's|DB_PASSWORD = .*|DB_PASSWORD = \"${env.DB_PASSWORD}\"|' app.py"
+                    sh "sed -i 's|DB_NAME = .*|DB_NAME = \"${env.DB_NAME}\"|' app.py"
+                    sh "sed -i 's|<tablename>|${env.TABLE_NAME}|' app.py"
 
-                // Update backend configuration file with RDS credentials and table name
-                sh "sed -i 's|DB_HOST = .*|DB_HOST = \"${env.RDS_HOST}\"|' app.py"
-                sh "sed -i 's|DB_USER = .*|DB_USER = \"${env.RDS_USERNAME}\"|' app.py"
-                sh "sed -i 's|DB_PASSWORD = .*|DB_PASSWORD = \"${env.RDS_PASSWORD}\"|' app.py"
-                sh "sed -i 's|<tablename>|${env.TABLE_NAME}|' app.py"
+                    // Deploy backend files to the backend EC2 instance
+                    sh "scp -r * root@${env.BACKEND_INSTANCE}:${env.BACKEND_DEPLOY_PATH}"
+                    sh "ssh root@${env.BACKEND_INSTANCE} \"cd ${env.BACKEND_DEPLOY_PATH} && sh dependencies.sh && nohup python3 app.py &\""
+                    sh "ssh root@${env.BACKEND_INSTANCE} 'netstat -anlp | grep "80"'"
+                    echo "successfully running the flask"
 
-                // Deploy backend files to the backend EC2 instance
-                sh "scp  -r backend/ root@${env.BACKEND_INSTANCE}:${env.BACKEND_DEPLOY_PATH}"
-                 // Install backend requirements
-                sh 'ssh root@${env.BACKEND_INSTANCE} "cd ${env.BACKEND_DEPLOY_PATH} && cd backend/ && sh dependencies.sh"'
-
-                // Get the backend URL
-                script {
-                    def backendUrl = sh (
-                        script: 'curl http://${env.BACKEND_INSTANCE}/',
-                        returnStdout: true
-                    ).trim()
-                    env.BACKEND_URL = backendUrl
+                    // Get the backend URL
+                    script {
+                        def backendUrl = sh (
+                            script: "curl http://${env.BACKEND_INSTANCE}/",
+                            returnStdout: true
+                        ).trim()
+                        env.BACKEND_URL = backendUrl
+                    }
                 }
             }
         }
 
         stage('Build and Deploy Frontend') {
-            // agent {
-            //     label 'frontend'
-            // }
             steps {
-                sh 'cd frontend'
+                dir('frontend') {
+                    // Update frontend environment variables with backend URL
+                    sh "sed -i 's|{{BACKEND_URL}}|${env.BACKEND_URL}|' src/app.js"
+                    echo "updated successfully"
 
-                // Update frontend environment variables with backend URL
-                sh "sed -i 's|{{BACKEND_URL}}|${env.BACKEND_URL}|' src/app.js"
-
-                // Deploy frontend build to the frontend EC2 instance
-                sh "scp -r frontend/ root@${env.FRONTEND_INSTANCE}:${env.FRONTEND_DEPLOY_PATH}"
-                sh "ssh root@${env.FRONTEND_INSTANCE} && yum install nodejs -y && cd frontend && npm install"
-
+                    // Deploy frontend build to the frontend EC2 instance
+                    sh "scp -r * root@${env.FRONTEND_INSTANCE}:${env.FRONTEND_DEPLOY_PATH}"
+                    sh "ssh root@${env.FRONTEND_INSTANCE} 'yum install nodejs -y && cd ${env.FRONTEND_DEPLOY_PATH} && npm install && nohup npm start &'"
+                }
             }
         }
     }
