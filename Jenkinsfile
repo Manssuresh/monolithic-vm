@@ -15,9 +15,9 @@ pipeline {
                 script{
                 sh """
                 cd backend
-                 // Or any other build commands for your backend
+                #Or any other build commands for your backend
                 
-                // Deploy backend to the backend EC2 instance
+                #Deploy backend to the backend EC2 instance
                 scp -r backend/ root@10.1.3.53:/root/
                 ssh root@10.1.3.53 'sh dependencies.sh'
                 """
