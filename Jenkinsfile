@@ -128,8 +128,7 @@
                 script{
                 sh ''' 
                 echo "running the reactjs application"
-
-                ssh root@${frontendhost} "npm start"
+                ssh root@${frontendhost} "nohup npm start &"
                 echo "completed successfully"                
                 '''
                 }
