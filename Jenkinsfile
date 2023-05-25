@@ -3,9 +3,11 @@
     parameters{
         string(name: 'flaskbucketname', defaultValue: 'flaskbucketname', description: 'bucket name')
         string(name: 'backendhost', defaultValue: 'backendhost', description: 'host name')
+        string(name: 'frontendhost', defaultValue: 'frontendhost', description: 'frontend name')
+        string(name: 'reactjsbucketname', defaultValue: 'reactjsbucketname', description: 'reactjs name')
     }
     stages{
-        stage('Build') {
+        stage('Build backend') {
             steps {
                 script{
                 sh '''
@@ -21,7 +23,7 @@
                 }
             }
         }
-        stage('Deploy') {
+        stage('Deploy backend ') {
             steps {
                 script{
                 sh '''
@@ -37,7 +39,7 @@
                 }
             }
         }
-        stage('Installation'){
+        stage('Installation backend dependencies'){
             steps{
                 script{
                 sh '''
@@ -48,7 +50,7 @@
                 }
             }
         }
-        stage('Run'){
+        stage('Run backend app'){
             steps{
                 script{
                 sh '''
@@ -65,6 +67,69 @@
                     sh '''
                     ssh root@${backendhost} "sudo netstat -anlp | grep '80'"
                     '''
+                }
+            }
+        }
+        stage('Update frontend URL') {
+            steps {
+                script {
+                    sh '''
+                    echo 'Updating frontend URL in App.js'
+                    ssh root@${frontendhost} "sed -i 's|\"backend url\"|http://${backendhost}:80|' ${WORKSPACE}/frontend/src/App.js"
+                    echo 'Frontend URL updated successfully'
+                    '''
+                }
+            }
+        }
+        stage('Build frontend'){
+            steps{
+                script{
+                    sh '''
+                    cd frontend
+                    echo "Building reactjs application"
+                    rm -fr *.zip
+                    zip -r reactjs-$BUILD_NUMBER.zip *
+                    aws s3 cp reactjs-$BUILD_NUMBER.zip s3://${reactjsbucketname}/
+                    echo "Flask application built successfully!"
+                    '''
+                }
+            }
+        }
+        stage('Deploy frontend'){
+            steps{
+                script{
+                    sh '''
+                    echo "Deploying reactjs application..."
+                    ssh root@${frontenddhost} "rm -rf *"
+                    aws s3 cp s3://${reactjsbucketname}/reactjs-$BUILD_NUMBER.zip .
+                    scp flask-$BUILD_NUMBER.zip root@${frontendhost}:/root/
+                    ssh root@${frontendhost} "unzip reactjs-$BUILD_NUMBER.zip"
+                    ssh root@${frontendhost} "sudo rm -rf *.zip"
+                    rm -fr *.zip
+                    echo "reactjs application deployed successfully!"
+                    '''
+                }
+            }
+        }
+        stage('Installation frontend dependencies'){
+            steps{
+                script{
+                    sh """
+                    echo "installing......"
+                    ssh root@${frontendhost} "yum install nodejs -y && npm install"
+                    echo "installed successfully"
+                    """
+                }
+            }
+        }
+        stage('Run frontend app'){
+            steps{
+                script{
+                sh ''' 
+                echo "running the reactjs application"
+                ssh root@${frontendhost} "npm start"
+                echo "completed successfully"                
+                '''
                 }
             }
         }
