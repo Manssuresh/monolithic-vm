@@ -24,11 +24,12 @@ pipeline {
             steps {
                 dir('backend') {
                     // Update backend configuration file with RDS credentials and table name
-                    sh "sed -i 's|DB_HOST = .*|DB_HOST = \"${env.DB_HOST}\"|' app.py"
-                    sh "sed -i 's|DB_USER = .*|DB_USER = \"${env.DB_USER}\"|' app.py"
-                    sh "sed -i 's|DB_PASSWORD = .*|DB_PASSWORD = \"${env.DB_PASSWORD}\"|' app.py"
-                    sh "sed -i 's|DB_NAME = .*|DB_NAME = \"${env.DB_NAME}\"|' app.py"
-                    sh "sed -i 's|<tablename>|${env.TABLE_NAME}|' app.py"
+            // Update backend configuration file with RDS credentials and table name
+                    sh 'sed -i "s|DB_HOST = .*|DB_HOST = '\''${env.DB_HOST}'\''|" app.py'
+                    sh 'sed -i "s|DB_USER = .*|DB_USER = '\''${env.DB_USER}'\''|" app.py'
+                    sh 'sed -i "s|DB_PASSWORD = .*|DB_PASSWORD = '\''${env.DB_PASSWORD}'\''|" app.py'
+                    sh 'sed -i "s|DB_NAME = .*|DB_NAME = '\''${env.DB_NAME}'\''|" app.py'
+                    sh 'sed -i "s|<tablename>|${env.TABLE_NAME}|" app.py'
 
                     // Deploy backend files to the backend EC2 instance
                     sh "scp -r * root@${env.BACKEND_INSTANCE}:${env.BACKEND_DEPLOY_PATH}"
