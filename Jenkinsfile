@@ -10,7 +10,7 @@ pipeline {
         
 
         
-        stage('Build and Deploy Backend') {
+        stage('Build backend') {
             steps {
                 script{
                 sh """
@@ -23,15 +23,22 @@ pipeline {
                 rm -fr *
                 echo 'Flask application built successfully!'
                 ssh root@10.1.3.53 'sh dependencies.sh'
-
+                """
+                }
+            }
+        }
+        stage('deploy backend'){
+            steps{
+                script{
+                sh """
                 echo 'Deploying Flask application...'
-                ssh root@10.1.3.53 "rm -rf *"
+                ssh root@10.1.3.53 'rm -rf *'
                 aws s3 cp s3://flask-package-bucket/college-$BUILD_NUMBER.zip .
                 scp college-$BUILD_NUMBER.zip root@10.1.3.53:/root/
-                ssh root@10.1.3.53 "unzip college-$BUILD_NUMBER.zip"
-                ssh root@10.1.3.53 "rm -rf *.zip"
+                ssh root@10.1.3.53 'unzip college-$BUILD_NUMBER.zip'
+                ssh root@10.1.3.53 'rm -rf *.zip'
                 rm -fr *.zip
-                echo 'Flask application deployed successfully!
+                echo 'Flask application deployed successfully!'
                 """
                 }
             }
