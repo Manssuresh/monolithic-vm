@@ -32,7 +32,8 @@ pipeline {
 
                     // Deploy backend files to the backend EC2 instance
                     sh "scp -r * root@${env.BACKEND_INSTANCE}:${env.BACKEND_DEPLOY_PATH}"
-                    sh "ssh root@${env.BACKEND_INSTANCE} \"cd ${env.BACKEND_DEPLOY_PATH} && sh dependencies.sh && nohup python3 app.py &\""
+                    sh "ssh root@${env.BACKEND_INSTANCE} \"cd ${env.BACKEND_DEPLOY_PATH} && sh dependencies.sh \""
+                    sh "ssh root@${env.BACKEND_INSTANCE} nohup python3 app.py &"
                     sh "ssh root@${env.BACKEND_INSTANCE} 'netstat -anlp | grep \"80\"'"
                     echo "successfully running the flask"
 
@@ -47,6 +48,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Build and Deploy Frontend') {
             steps {
