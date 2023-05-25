@@ -5,6 +5,7 @@
         string(name: 'backendhost', defaultValue: 'backendhost', description: 'host name')
         string(name: 'frontendhost', defaultValue: 'frontendhost', description: 'frontend name')
         string(name: 'reactjsbucketname', defaultValue: 'reactjsbucketname', description: 'reactjs name')
+        string(name: 'albEndpoint', defaultValue: 'backend alb endpoint', description: 'alb endpoint')
     }
     stages{
         stage('Build backend') {
@@ -74,7 +75,7 @@
         stage('Update frontend URL') {
             steps {  
                 sh 'echo "Updating frontend URL in App.js"'
-                sh "sed -i 's|\"backend url\"|\"http://${backendhost}:80\"|' ${WORKSPACE}/frontend/src/App.js"
+                sh "sed -i 's|\"backend url\"|\"${albEndpoint}\"|' ${WORKSPACE}/frontend/src/App.js"
                 sh 'echo "updated.."'  
             }
         }        
