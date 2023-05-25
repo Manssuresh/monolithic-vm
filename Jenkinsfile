@@ -70,17 +70,7 @@
                 }
             }
         }
-        stage('Update frontend URL') {
-            steps {
-                script {
-                    sh '''
-                    echo 'Updating frontend URL in App.js'
-                    ssh root@${frontendhost} "sed -i 's|\"backend url\"|http://${backendhost}:80|' ${WORKSPACE}/frontend/src/App.js"
-                    echo 'Frontend URL updated successfully'
-                    '''
-                }
-            }
-        }
+        
         stage('Build frontend'){
             steps{
                 script{
@@ -100,13 +90,24 @@
                 script{
                     sh '''
                     echo "Deploying reactjs application..."
-                    ssh root@${frontenddhost} "rm -rf *"
+                    ssh root@${frontendhost} "rm -rf *"
                     aws s3 cp s3://${reactjsbucketname}/reactjs-$BUILD_NUMBER.zip .
-                    scp flask-$BUILD_NUMBER.zip root@${frontendhost}:/root/
+                    scp reactjs-$BUILD_NUMBER.zip root@${frontendhost}:/root/
                     ssh root@${frontendhost} "unzip reactjs-$BUILD_NUMBER.zip"
                     ssh root@${frontendhost} "sudo rm -rf *.zip"
                     rm -fr *.zip
                     echo "reactjs application deployed successfully!"
+                    '''
+                }
+            }
+        }
+        stage('Update frontend URL') {
+            steps {
+                script {
+                    sh '''
+                    echo "Updating frontend URL in App.js"
+                    sed -i 's|\"backend url\"|http://${backendhost}:80|' ${WORKSPACE}/frontend/src/App.js
+                    echo 'Frontend URL updated successfully'
                     '''
                 }
             }
