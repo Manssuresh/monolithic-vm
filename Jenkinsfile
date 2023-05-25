@@ -114,11 +114,11 @@
         stage('Installation frontend dependencies'){
             steps{
                 script{
-                    sh """
+                    sh '''
                     echo "installing......"
                     ssh root@${frontendhost} "yum install nodejs -y && npm install"
                     echo "installed successfully"
-                    """
+                    '''
                 }
             }
         }
