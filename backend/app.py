@@ -1,32 +1,52 @@
-from flask import Flask, render_template
+
+import boto3
+from botocore.exceptions import ClientError
+from flask import Flask, jsonify
+import json
 import mysql.connector
-import os
+import configparser
 
 app = Flask(__name__)
 
-# To allow requests from all origins
+
 @app.after_request
 def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    response.headers['Access-Control-Allow-Methods'] = 'OPTIONS, HEAD, GET, POST'
+    response.headers['Access-Control-Allow-Methods'] = 'OPTIONS,HEAD,GET,POST'
     return response
 
 @app.route('/')
 def index():
-    db_host = os.environ.get('DB_HOST')
-    db_user = os.environ.get('DB_USER')
-    db_password = os.environ.get('DB_PASSWORD')
-    db_name = os.environ.get('DB_NAME')
-    table_name = os.environ.get('TABLE_NAME')
+    # Create a configparser object
+    config = configparser.ConfigParser()
 
-    cnx = mysql.connector.connect(user=db_user, password=db_password,
-                                   host=db_host, database=db_name)
+    # Read the properties file
+    config.read('properties.db')
+
+    # Access the values from the 'database' section
+    user = config.get('database', 'user')
+    password = config.get('database', 'password')
+    host = config.get('database', 'host')
+    database = config.get('database', 'database')
+
+    # Establish the MySQL connection
+    cnx = mysql.connector.connect(
+            user=user,
+            password=password,
+            host=host,
+            database=database
+            )
+
+    # Execute a query to retrieve data from the "employee" table
     cursor = cnx.cursor()
-    query = "SELECT * FROM {}".format(table_name)
+    query = "SELECT * FROM studentlist"
     cursor.execute(query)
     rows = cursor.fetchall()
+
+    # Close the database connection
     cnx.close()
+
 
     return render_template('table.html', rows=rows)
 
