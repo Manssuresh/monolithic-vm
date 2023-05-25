@@ -61,6 +61,7 @@
                 }
             }
         }
+
         stage('confirmation'){
             steps{
                 script{
@@ -70,6 +71,13 @@
                 }
             }
         }
+        stage('Update frontend URL') {
+            steps {  
+                sh 'echo "Updating frontend URL in App.js"'
+                sh "sed -i 's|\"backend url\"|http://${backendhost}:80|' ${WORKSPACE}/frontend/src/App.js"
+                sh 'echo "updated.."'  
+            }
+        }        
         
         stage('Build frontend'){
             steps{
@@ -101,17 +109,7 @@
                 }
             }
         }
-        stage('Update frontend URL') {
-            steps {
-                
-                
-                sh 'echo "Updating frontend URL in App.js"'
-                sh "sed -i 's|\"backend url\"|http://${backendhost}:80|' ${WORKSPACE}/frontend/src/App.js"
-                sh 'echo "updated.."'
-            
-                
-            }
-        } 
+ 
         stage('Installation frontend dependencies'){
             steps{
                 script{
