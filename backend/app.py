@@ -39,7 +39,7 @@ def index():
     # Create the table if it doesn't exist
     cursor = cnx.cursor()
     create_table_query = """
-    CREATE TABLE studentlist  (name VARCHAR(50) NOT NULL, roll INT NOT NULL,grade CHAR(1) NOT NULL );
+    CREATE TABLE IF NOT EXISTS studentlist  (name VARCHAR(50) NOT NULL, roll INT NOT NULL,grade CHAR(1) NOT NULL );
     """
     cursor.execute(create_table_query)
 
