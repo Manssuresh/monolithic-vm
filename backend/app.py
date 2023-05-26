@@ -1,14 +1,11 @@
-
 import boto3
 from botocore.exceptions import ClientError
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import json
 import mysql.connector
 import configparser
-from flask import Flask, render_template
 
 app = Flask(__name__)
-
 
 @app.after_request
 def add_cors_headers(response):
@@ -33,21 +30,37 @@ def index():
 
     # Establish the MySQL connection
     cnx = mysql.connector.connect(
-            user=user,
-            password=password,
-            host=host,
-            database=database
-            )
+        user=user,
+        password=password,
+        host=host,
+        database=database
+    )
 
-    # Execute a query to retrieve data from the "employee" table
+    # Create the table if it doesn't exist
     cursor = cnx.cursor()
-    query = "SELECT * FROM studentlist"
-    cursor.execute(query)
+    create_table_query = """
+    CREATE TABLE studentlist  (name VARCHAR(50) NOT NULL, roll INT NOT NULL,grade CHAR(1) NOT NULL );
+    """
+    cursor.execute(create_table_query)
+
+    # Insert values into the table
+    insert_query = """
+    INSERT INTO studentlist (name, roll,grade)
+    VALUES (%s, %s, %s)
+    """
+    values = [('leo hank', 143, 'A'), ('jon rina', 124, 'B'), ('hylu sed', 564, 'C')]  # Example values to insert
+    cursor.executemany(insert_query, values)
+
+    # Commit the changes
+    cnx.commit()
+
+    # Retrieve data from the "studentlist" table
+    select_query = "SELECT * FROM studentlist"
+    cursor.execute(select_query)
     rows = cursor.fetchall()
 
     # Close the database connection
     cnx.close()
-
 
     return render_template('table.html', rows=rows)
 
