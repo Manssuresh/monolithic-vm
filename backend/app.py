@@ -36,23 +36,29 @@ def index():
         database=database
     )
 
-    # Create the table if it doesn't exist
+    # Check if the table contains data
     cursor = cnx.cursor()
-    create_table_query = """
-    CREATE TABLE IF NOT EXISTS studentlist  (name VARCHAR(50) NOT NULL, roll INT NOT NULL,grade CHAR(1) NOT NULL );
-    """
-    cursor.execute(create_table_query)
+    select_query = "SELECT COUNT(*) FROM studentlist"
+    cursor.execute(select_query)
+    count = cursor.fetchone()[0]
 
-    # Insert values into the table
-    insert_query = """
-    INSERT IGNORE INTO studentlist (name, roll,grade)
-    VALUES (%s, %s, %s)
-    """
-    values = [('leo hank', 143, 'A'), ('jon rina', 124, 'B'), ('hylu sed', 564, 'C')]  # Example values to insert
-    cursor.executemany(insert_query, values)
+    if count == 0:  # If the table is empty, insert the values
+        # Create the table if it doesn't exist
+        create_table_query = """
+        CREATE TABLE IF NOT EXISTS studentlist (name VARCHAR(50) NOT NULL, roll INT NOT NULL, grade CHAR(1) NOT NULL);
+        """
+        cursor.execute(create_table_query)
 
-    # Commit the changes
-    cnx.commit()
+        # Insert values into the table
+        insert_query = """
+        INSERT INTO studentlist (name, roll, grade)
+        VALUES (%s, %s, %s)
+        """
+        values = [('leo hank', 143, 'A'), ('jon rina', 124, 'B'), ('hylu sed', 564, 'C')]  # Example values to insert
+        cursor.executemany(insert_query, values)
+
+        # Commit the changes
+        cnx.commit()
 
     # Retrieve data from the "studentlist" table
     select_query = "SELECT * FROM studentlist"
