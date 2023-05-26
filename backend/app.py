@@ -45,7 +45,7 @@ def index():
 
     # Insert values into the table
     insert_query = """
-    INSERT INTO studentlist (name, roll,grade)
+    INSERT IGNORE INTO studentlist (name, roll,grade)
     VALUES (%s, %s, %s)
     """
     values = [('leo hank', 143, 'A'), ('jon rina', 124, 'B'), ('hylu sed', 564, 'C')]  # Example values to insert
