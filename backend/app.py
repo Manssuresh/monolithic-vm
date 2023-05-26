@@ -36,29 +36,28 @@ def index():
         database=database
     )
 
-    # Check if the table contains data
+    # Delete all values from the table
+    delete_query = "DELETE FROM studentlist"
     cursor = cnx.cursor()
-    select_query = "SELECT COUNT(*) FROM studentlist"
-    cursor.execute(select_query)
-    count = cursor.fetchone()[0]
+    cursor.execute(delete_query)
+    cnx.commit()
 
-    if count == 0:  # If the table is empty, insert the values
-        # Create the table if it doesn't exist
-        create_table_query = """
-        CREATE TABLE IF NOT EXISTS studentlist (name VARCHAR(50) NOT NULL, roll INT NOT NULL, grade CHAR(1) NOT NULL);
-        """
-        cursor.execute(create_table_query)
+    # Create the table if it doesn't exist
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS studentlist (name VARCHAR(50) NOT NULL, roll INT NOT NULL, grade CHAR(1) NOT NULL);
+    """
+    cursor.execute(create_table_query)
 
-        # Insert values into the table
-        insert_query = """
-        INSERT INTO studentlist (name, roll, grade)
-        VALUES (%s, %s, %s)
-        """
-        values = [('leo hank', 143, 'A'), ('jon rina', 124, 'B'), ('hylu sed', 564, 'C')]  # Example values to insert
-        cursor.executemany(insert_query, values)
+    # Insert values into the table
+    insert_query = """
+    INSERT INTO studentlist (name, roll, grade)
+    VALUES (%s, %s, %s)
+    """
+    values = [('leo hank', 143, 'A'), ('jon rina', 124, 'B'), ('hylu sed', 564, 'C')]  # Example values to insert
+    cursor.executemany(insert_query, values)
 
-        # Commit the changes
-        cnx.commit()
+    # Commit the changes
+    cnx.commit()
 
     # Retrieve data from the "studentlist" table
     select_query = "SELECT * FROM studentlist"
