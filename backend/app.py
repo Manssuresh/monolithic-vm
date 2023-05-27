@@ -36,17 +36,19 @@ def index():
         database=database
     )
 
-    # Delete all values from the table
-    delete_query = "DELETE FROM studentlist"
-    cursor = cnx.cursor()
-    cursor.execute(delete_query)
-    cnx.commit()
+
 
     # Create the table if it doesn't exist
     create_table_query = """
     CREATE TABLE IF NOT EXISTS studentlist (name VARCHAR(50) NOT NULL, roll INT NOT NULL, grade CHAR(1) NOT NULL);
     """
     cursor.execute(create_table_query)
+
+        # Delete all values from the table
+    delete_query = "DELETE FROM studentlist"
+    cursor = cnx.cursor()
+    cursor.execute(delete_query)
+    cnx.commit()
 
     # Insert values into the table
     insert_query = """
