@@ -1,5 +1,5 @@
 [database]
 user=thanshi
 password=thanshi123
-host=terraform-20230526155834384900000004.cwvcthgt8zhp.ap-south-1.rds.amazonaws.com
+host=terraform-20230527125157297400000001.ckpkihhwgq84.ap-south-1.rds.amazonaws.com
 database=PythonAppDb
