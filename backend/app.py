@@ -44,11 +44,11 @@ def index():
     """
     cursor.execute(create_table_query)
 
-        # Delete all values from the table
-    delete_query = "DELETE FROM studentlist"
-    cursor = cnx.cursor()
-    cursor.execute(delete_query)
-    cnx.commit()
+    #     # Delete all values from the table
+    # delete_query = "DELETE FROM studentlist"
+    # cursor = cnx.cursor()
+    # cursor.execute(delete_query)
+    # cnx.commit()
 
     # Insert values into the table
     insert_query = """
