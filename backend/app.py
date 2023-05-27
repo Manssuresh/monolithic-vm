@@ -36,7 +36,7 @@ def index():
         database=database
     )
 
-
+    cursor = cnx.cursor()
 
     # Create the table if it doesn't exist
     create_table_query = """
