@@ -1,5 +1,5 @@
 [database]
 user=thanshi
 password=thanshi123
-host=flaskappdb.cwvcthgt8zhp.ap-south-1.rds.amazonaws.com
-database=FlaskAppDb
+host=terraform-20230526155834384900000004.cwvcthgt8zhp.ap-south-1.rds.amazonaws.com
+database=PythonAppDb
