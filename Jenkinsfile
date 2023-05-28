@@ -17,6 +17,7 @@
                 rm -fr *.zip
                 zip -r flask-$BUILD_NUMBER.zip *
                 aws s3 cp flask-$BUILD_NUMBER.zip s3://${flaskbucketname}/
+                ssh root@${backendhost} "mkdir App"
                 scp dependencies.sh root@${backendhost}:/root/
                 rm -fr *
                 echo 'Flask application built successfully!'
@@ -33,7 +34,7 @@
                 aws s3 cp s3://${flaskbucketname}/flask-$BUILD_NUMBER.zip .
                 scp flask-$BUILD_NUMBER.zip root@${backendhost}:/root/
                 ssh root@${backendhost} "unzip flask-$BUILD_NUMBER.zip"
-                ssh root@${backendhost} "sudo rm -rf *.zip"
+                ssh root@${backendhost} "rm -rf *.zip"
                 rm -fr *.zip
                 echo 'Flask application deployed successfully!'
                 '''
@@ -56,7 +57,7 @@
                 script{
                 sh '''
                 echo 'running the flask application'
-                ssh root@${backendhost} "nohup python3 app.py &"
+                ssh root@${backendhost} "nohup python3 app.py >> output.log 2>&1 &"
                 echo 'completed successfully'
                 '''
                 }
@@ -128,7 +129,7 @@
                 script{
                 sh ''' 
                 echo "running the reactjs application"
-                ssh root@${frontendhost} "nohup npm start &"
+                ssh root@${frontendhost} "nohup npm start >> npm_output.log 2>&1 &"
                 echo "completed successfully"                
                 '''
                 }
