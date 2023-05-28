@@ -100,7 +100,7 @@
                 script{
                     sh '''
                     echo "Deploying reactjs application..."
-                    ssh root@${backendhost} "rm -rf App && mkdir App"
+                    ssh root@${backendhost} "mkdir App"
                     ssh root@${frontendhost} "cd App && rm -rf *"
                     aws s3 cp s3://${reactjsbucketname}/reactjs-$BUILD_NUMBER.zip .
                     scp reactjs-$BUILD_NUMBER.zip root@${frontendhost}:/root/App
@@ -130,7 +130,7 @@
                 script{
                 sh ''' 
                 echo "running the reactjs application"
-                ssh root@${frontendhost} "nohup npm start >> npm_output.log 2>&1 &"
+                ssh root@${frontendhost} "cd App && nohup npm start >> npm_output.log 2>&1 &"
                 echo "completed successfully"                
                 '''
                 }
