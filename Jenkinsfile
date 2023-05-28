@@ -33,7 +33,7 @@
                 ssh root@${backendhost} "cd App && rm -rf *"
                 aws s3 cp s3://${flaskbucketname}/flask-$BUILD_NUMBER.zip .
                 scp flask-$BUILD_NUMBER.zip root@${backendhost}:/root/App
-                ssh root@${backendhost} "unzip flask-$BUILD_NUMBER.zip"
+                ssh root@${backendhost} "cd App && unzip flask-$BUILD_NUMBER.zip"
                 ssh root@${backendhost} "cd App && rm -rf *.zip"
                 rm -fr *.zip
                 echo 'Flask application deployed successfully!'
@@ -104,7 +104,7 @@
                     ssh root@${frontendhost} "cd App && rm -rf *"
                     aws s3 cp s3://${reactjsbucketname}/reactjs-$BUILD_NUMBER.zip .
                     scp reactjs-$BUILD_NUMBER.zip root@${frontendhost}:/root/App
-                    ssh root@${frontendhost} "unzip reactjs-$BUILD_NUMBER.zip"
+                    ssh root@${frontendhost} "cd App && unzip reactjs-$BUILD_NUMBER.zip"
                     ssh root@${frontendhost} "sudo rm -rf *.zip"
                     rm -fr *.zip
                     echo "reactjs application deployed successfully!"
