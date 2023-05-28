@@ -46,7 +46,7 @@
                 script{
                 sh '''
                 echo 'installing the dependencies...'
-                ssh root@${backendhost} "sh /App/dependencies.sh"
+                ssh root@${backendhost} "sh App/dependencies.sh"
                 echo 'installed successfully'
                 '''
                 }
