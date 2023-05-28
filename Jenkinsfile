@@ -17,7 +17,6 @@
                 rm -fr *.zip
                 zip -r flask-$BUILD_NUMBER.zip *
                 aws s3 cp flask-$BUILD_NUMBER.zip s3://${flaskbucketname}/
-                ssh root@${backendhost} "mkdir App"
                 scp dependencies.sh root@${backendhost}:/root/
                 rm -fr *
                 echo 'Flask application built successfully!'
