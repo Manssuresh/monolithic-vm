@@ -76,7 +76,7 @@
             steps {  
                 sh 'echo "Updating frontend URL in App.js"'
                 sh 'cat ${WORKSPACE}/frontend/src/App.js'
-                sh "sed -i 's|\"backend url\"|\"${albEndpoint}\"|g' ${WORKSPACE}/frontend/src/App.js"
+                sh "sed -E -i 's|\"backend url(/[^\\\"]*)?\"|\"${albEndpoint}\"|g' ${WORKSPACE}/frontend/src/App.js"
                 sh 'cat ${WORKSPACE}/frontend/src/App.js'
                 sh 'echo "updated.."'  
             }
