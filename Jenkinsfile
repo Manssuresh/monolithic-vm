@@ -105,7 +105,7 @@
                     ssh root@${frontendhost} "if [ ! -d app ]; then mkdir /home/ec2-user/app; fi"
                     ssh root@${frontendhost} "rm -rf app/*"
                     aws s3 cp s3://${reactjsbucketname}/reactjs-$BUILD_NUMBER.zip /home/ec2-user/app
-                    scp /home/ec2-user/appreactjs-$BUILD_NUMBER.zip root@${frontendhost}:/home/ec2-user/app
+                    scp reactjs-$BUILD_NUMBER.zip root@${frontendhost}:/home/ec2-user/app
                     ssh root@${frontendhost} "unzip -o /home/ec2-user/appreactjs-$BUILD_NUMBER.zip -d app/"
                     ssh root@${frontendhost} "sudo rm -rf /home/ec2-user/app*.zip"
                     rm -fr *.zip
