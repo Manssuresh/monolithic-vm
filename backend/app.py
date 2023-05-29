@@ -60,64 +60,74 @@ def index():
     for query in create_table_queries:
         cursor.execute(query)
 
-    # Insert values into the tables
-    insert_queries = [
-        """
-        INSERT INTO studentlist (name, roll, grade) VALUES (%s, %s, %s)
-        """,
-        """
-        INSERT INTO employeelist (name, employee_id, department) VALUES (%s, %s, %s)
-        """,
-        """
-        INSERT INTO workerlist (name, worker_id, job_title) VALUES (%s, %s, %s)
-        """,
-        """
-        INSERT INTO salarylist (name, roll_id, salary) VALUES (%s, %s, %s)
-        """
-    ]
-
-    values = [
-        [('leo hank', 143, 'A'), ('jon rina', 124, 'B'), ('hylu sed', 564, 'C')],  # Example values for studentlist
-        [('John Doe', 1001, 'HR'), ('Jane Smith', 1002, 'IT')],  # Example values for employeelist
-        [('Mike Johnson', 2001, 'Engineer'), ('Sarah Anderson', 2002, 'Designer')],  # Example values for workerlist
-        [('Mike Johnson', 2001, 5000.00), ('Jane Smith', 1002, 6000.00)]  # Example values for salarylist
-    ]
-
-    for i, query in enumerate(insert_queries):
-        cursor.executemany(query, values[i])
-
     # Commit the changes
     cnx.commit()
 
-    # Retrieve data from the tables
-    select_queries = [
-        "SELECT * FROM studentlist",
-        "SELECT * FROM employeelist",
-        "SELECT * FROM workerlist",
-        "SELECT * FROM salarylist"
-    ]
+    # Insert values into the tables if they are empty
+    cursor.execute("SELECT COUNT(*) FROM studentlist")
+    count = cursor.fetchone()[0]
 
-    tables = ['studentlist', 'employeelist', 'workerlist', 'salarylist']
-    data = {}
+    if count == 0:
+        insert_queries = [
+            """
+            INSERT INTO studentlist (name, roll, grade) VALUES (%s, %s, %s)
+            """,
+            """
+            INSERT INTO employeelist (name, employee_id, department) VALUES (%s, %s, %s)
+            """,
+            """
+            INSERT INTO workerlist (name, worker_id, job_title) VALUES (%s, %s, %s)
+            """,
+            """
+            INSERT INTO salarylist (name, roll_id, salary) VALUES (%s, %s, %s)
+            """
+        ]
 
-    for i, query in enumerate(select_queries):
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        columns = [desc[0] for desc in cursor.description]
-        table_data = []
+        values = [
+            [('leo hank', 143, 'A'), ('jon rina', 124, 'B'), ('hylu sed', 564, 'C')],  # Example values for studentlist
+            [('John Doe', 1001, 'HR'), ('Jane Smith', 1002, 'IT')],  # Example values for employeelist
+            [('Mike Johnson', 2001, 'Engineer'), ('Sarah Anderson', 2002, 'Designer')],  # Example values for workerlist
+            [('Mike Johnson', 2001, 5000.00), ('Jane Smith', 1002, 6000.00)]  # Example values for salarylist
+        ]
 
-        for row in rows:
-            row_data = {}
-            for j, value in enumerate(row):
-                row_data[columns[j]] = value
-            table_data.append(row_data)
+        for i, query in enumerate(insert_queries):
+            cursor.executemany(query, values[i])
 
-        data[tables[i]] = table_data
+        # Commit the changes
+        cnx.commit()
 
-    # Close the database connection
-    cnx.close()
+        return "Tables created and values inserted successfully!"
 
-    return jsonify(data)
+
+    # # Retrieve data from the tables
+    # select_queries = [
+    #     "SELECT * FROM studentlist",
+    #     "SELECT * FROM employeelist",
+    #     "SELECT * FROM workerlist",
+    #     "SELECT * FROM salarylist"
+    # ]
+
+    # tables = ['studentlist', 'employeelist', 'workerlist', 'salarylist']
+    # data = {}
+
+    # for i, query in enumerate(select_queries):
+    #     cursor.execute(query)
+    #     rows = cursor.fetchall()
+    #     columns = [desc[0] for desc in cursor.description]
+    #     table_data = []
+
+    #     for row in rows:
+    #         row_data = {}
+    #         for j, value in enumerate(row):
+    #             row_data[columns[j]] = value
+    #         table_data.append(row_data)
+
+    #     data[tables[i]] = table_data
+
+    # # Close the database connection
+    # cnx.close()
+
+    # return jsonify(data)
 
 @app.route('/employeelist')
 def employeelist():
