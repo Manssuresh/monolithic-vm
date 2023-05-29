@@ -8,7 +8,7 @@ const StudentTable = () => {
   const [salaries, setSalaries] = useState([]);
 
   useEffect(() => {
-    axios.get('http://backend url/studentlist')
+    axios.get('backend url/studentlist')
       .then(response => {
         setStudents(response.data.studentlist);
       })
@@ -16,7 +16,7 @@ const StudentTable = () => {
         console.error('Error fetching student data:', error);
       });
 
-    axios.get('http://backend url/employeelist')
+    axios.get('backend url/employeelist')
       .then(response => {
         setEmployees(response.data.employeelist);
       })
@@ -24,7 +24,7 @@ const StudentTable = () => {
         console.error('Error fetching employee data:', error);
       });
 
-    axios.get('http://backend url/workerlist')
+    axios.get('backend url/workerlist')
       .then(response => {
         setWorkers(response.data.workerlist);
       })
@@ -32,7 +32,7 @@ const StudentTable = () => {
         console.error('Error fetching workers data:', error);
       });
 
-    axios.get('http://backend url/salarylist')
+    axios.get('backend url/salarylist')
       .then(response => {
         setSalaries(response.data.salarylist);
       })
