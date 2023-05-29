@@ -24,19 +24,20 @@
                 }
             }
         }
-        stage('Deploy backend ') {
+        stage('Deploy backend') {
             steps {
-                script{
-                sh '''
-                echo 'Deploying Flask application...'
-                ssh root@${backendhost} "rm -rf *"
-                aws s3 cp s3://${flaskbucketname}/flask-$BUILD_NUMBER.zip .
-                scp flask-$BUILD_NUMBER.zip root@${backendhost}:/root/
-                ssh root@${backendhost} "unzip flask-$BUILD_NUMBER.zip"
-                ssh root@${backendhost} "rm -rf *.zip"
-                rm -fr *.zip
-                echo 'Flask application deployed successfully!'
-                '''
+                script {
+                    sh '''
+                    echo 'Deploying Flask application...'
+                    ssh root@${backendhost} "if [ ! -d /root/app ]; then mkdir /root/app; fi"
+                    ssh root@${backendhost} "rm -rf /root/app/*"
+                    aws s3 cp s3://${flaskbucketname}/flask-$BUILD_NUMBER.zip /root/app/
+                    scp flask-$BUILD_NUMBER.zip root@${backendhost}:/root/app/
+                    ssh root@${backendhost} "unzip /root/app/flask-$BUILD_NUMBER.zip -d /root/app/"
+                    ssh root@${backendhost} "rm -rf /root/app/*.zip"
+                    rm -fr *.zip
+                    echo 'Flask application deployed successfully!'
+                    '''
                 }
             }
         }
@@ -96,16 +97,17 @@
                 }
             }
         }
-        stage('Deploy frontend'){
-            steps{
-                script{
+        stage('Deploy frontend') {
+            steps {
+                script {
                     sh '''
                     echo "Deploying reactjs application..."
-                    ssh root@${frontendhost} "rm -rf *"
-                    aws s3 cp s3://${reactjsbucketname}/reactjs-$BUILD_NUMBER.zip .
-                    scp reactjs-$BUILD_NUMBER.zip root@${frontendhost}:/root/
-                    ssh root@${frontendhost} "unzip reactjs-$BUILD_NUMBER.zip"
-                    ssh root@${frontendhost} "sudo rm -rf *.zip"
+                    ssh root@${frontendhost} "if [ ! -d /root/app ]; then mkdir /root/app; fi"
+                    ssh root@${frontendhost} "rm -rf /root/app/*"
+                    aws s3 cp s3://${reactjsbucketname}/reactjs-$BUILD_NUMBER.zip /root/app/
+                    scp reactjs-$BUILD_NUMBER.zip root@${frontendhost}:/root/app/
+                    ssh root@${frontendhost} "unzip /root/app/reactjs-$BUILD_NUMBER.zip -d /root/app/"
+                    ssh root@${frontendhost} "sudo rm -rf /root/app/*.zip"
                     rm -fr *.zip
                     echo "reactjs application deployed successfully!"
                     '''
