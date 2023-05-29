@@ -1,5 +1,5 @@
 [database]
-user=thanshi
-password=thanshi123
-host=terraform-20230528000056876400000004.ckpkihhwgq84.ap-south-1.rds.amazonaws.com
-database=PythonAppDb
+user = thanshi
+password = thanshi123
+host = flaskappdb.ckpkihhwgq84.ap-south-1.rds.amazonaws.com
+database = flaskdb
