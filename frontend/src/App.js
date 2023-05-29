@@ -8,7 +8,7 @@ const StudentTable = () => {
   const [salaries, setSalaries] = useState([]);
 
   useEffect(() => {
-    axios.get('backend url/studentlist')
+    axios.get('backend url')
       .then(response => {
         setStudents(response.data.studentlist);
       })
