@@ -17,7 +17,8 @@
                 rm -fr *.zip
                 zip -r flask-$BUILD_NUMBER.zip *
                 aws s3 cp flask-$BUILD_NUMBER.zip s3://${flaskbucketname}/
-                scp dependencies.sh root@${backendhost}:/root/
+                ssh root@${backendhost} "if [ ! -d app ]; then mkdir app; fi"
+                scp dependencies.sh root@${backendhost}:/root/app/
                 rm -fr *
                 echo 'Flask application built successfully!'
                 '''
@@ -29,12 +30,11 @@
                 script {
                     sh '''
                     echo 'Deploying Flask application...'
-                    ssh root@${backendhost} "if [ ! -d /root/app ]; then mkdir /root/app; fi"
-                    ssh root@${backendhost} "rm -rf /root/app/*"
-                    aws s3 cp s3://${flaskbucketname}/flask-$BUILD_NUMBER.zip /root/app/
-                    scp flask-$BUILD_NUMBER.zip root@${backendhost}:/root/app/
-                    ssh root@${backendhost} "unzip /root/app/flask-$BUILD_NUMBER.zip -d /root/app/"
-                    ssh root@${backendhost} "rm -rf /root/app/*.zip"
+                    ssh root@${backendhost} "rm -rf app/*"
+                    aws s3 cp s3://${flaskbucketname}/flask-$BUILD_NUMBER.zip .
+                    scp flask-$BUILD_NUMBER.zip root@${backendhost}:app/
+                    ssh root@${backendhost} "unzip app/flask-$BUILD_NUMBER.zip "
+                    ssh root@${backendhost} "rm -rf app/*.zip"
                     rm -fr *.zip
                     echo 'Flask application deployed successfully!'
                     '''
@@ -46,7 +46,7 @@
                 script{
                 sh '''
                 echo 'installing the dependencies...'
-                ssh root@${backendhost} "sh dependencies.sh"
+                ssh root@${backendhost} "sh app/dependencies.sh"
                 echo 'installed successfully'
                 '''
                 }
@@ -57,7 +57,7 @@
                 script{
                 sh '''
                 echo 'running the flask application'
-                ssh root@${backendhost} "nohup python3 app.py >> output.log 2>&1 &"
+                ssh root@${backendhost} "cd app && nohup python3 app.py >> output.log 2>&1 &"
                 echo 'completed successfully'
                 '''
                 }
@@ -102,12 +102,12 @@
                 script {
                     sh '''
                     echo "Deploying reactjs application..."
-                    ssh root@${frontendhost} "if [ ! -d /root/app ]; then mkdir /root/app; fi"
-                    ssh root@${frontendhost} "rm -rf /root/app/*"
-                    aws s3 cp s3://${reactjsbucketname}/reactjs-$BUILD_NUMBER.zip /root/app/
-                    scp reactjs-$BUILD_NUMBER.zip root@${frontendhost}:/root/app/
-                    ssh root@${frontendhost} "unzip /root/app/reactjs-$BUILD_NUMBER.zip -d /root/app/"
-                    ssh root@${frontendhost} "sudo rm -rf /root/app/*.zip"
+                    ssh root@${frontendhost} "if [ ! -d app ]; then mkdir app; fi"
+                    ssh root@${frontendhost} "rm -rf app/*"
+                    aws s3 cp s3://${reactjsbucketname}/reactjs-$BUILD_NUMBER.zip .
+                    scp reactjs-$BUILD_NUMBER.zip root@${frontendhost}:app/
+                    ssh root@${frontendhost} "unzip app/reactjs-$BUILD_NUMBER.zip"
+                    ssh root@${frontendhost} "sudo rm -rf app/*.zip"
                     rm -fr *.zip
                     echo "reactjs application deployed successfully!"
                     '''
@@ -120,7 +120,7 @@
                 script{
                     sh '''
                     echo "installing......"
-                    ssh root@${frontendhost} "rm -rf node_modules"
+                    ssh root@${frontendhost} "rm -rf app/node_modules"
                     ssh root@${frontendhost} "yum install nodejs -y && npm install && npm install axios"
                     echo "installed successfully"
                     '''
