@@ -84,7 +84,7 @@ def index():
     ]
 
     for i, query in enumerate(insert_queries):
-        cursor.execute(query, values[i])
+        cursor.executemany(query, values[i])
 
     # Commit the changes
     cnx.commit()
