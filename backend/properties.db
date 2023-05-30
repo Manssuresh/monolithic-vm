@@ -1,5 +1,5 @@
 [database]
 user = thanshi
 password = thanshi123
-host = terraform-20230529094043507400000006.ckpkihhwgq84.ap-south-1.rds.amazonaws.com
+host = terraform-20230530035636032900000004.ckpkihhwgq84.ap-south-1.rds.amazonaws.com
 database = PythonAppDb
